@@ -3,9 +3,13 @@ An unoffical client library for Google APIs.
 <br>
 
 ## Installation
-Install this library using cargo.
+Run the following Cargo command in your project directory:
 ```
-cargo add 
+cargo add google-api-rust-client-unoffical
+```
+Or add the following line to your Cargo.toml:
+```
+google-api-rust-client-unoffical = "0.1.0"
 ```
 <br>
 

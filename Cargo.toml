@@ -1,0 +1,28 @@
+[package]
+name = "google-api-rust-client-unoffical"
+version = "0.1.0"
+edition = "2021"
+authors = ["Itsuki <itsuki.enjoy@google.com>"]
+description = "An unoffical client library for Google APIs. "
+readme = "README.md"
+repository = "https://github.com/0Itsuki0/google-api-rust-client.git"
+license = "Apache-2.0"
+license-file = "LICENSE"
+keywords = ["auth", "google", "google-api"]
+categories = ["authentication", "web-programming"]
+
+
+[dependencies]
+chrono = "0.4.26"
+jsonwebtoken = "8.3.0"
+reqwest = { version = "0.11.18", features = ["multipart"] }
+serde = { version = "1.0.182", features = ["derive"] }
+serde_json = "1.0.104"
+tokio = {version = "1.29.1", features = ["full"] }
+url_encoded_data = "0.6.1"
+dotenv = "0.15.0"
+async-recursion = "1.0.4"
+regex = "1.9.4"
+dotenvy = "0.15.7"
+async-trait = "0.1.73"
+anyhow = "1.0.75"

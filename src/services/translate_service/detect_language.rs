@@ -11,7 +11,7 @@ impl TranslateService {
     /// Detects the language of texts. <br>
     /// See https://cloud.google.com/translate/docs/basic/detecting-language
     ///
-    /// * `q` -  an array of strings to upon which to perform language detection.
+    /// * `text` -  an array of strings to upon which to perform language detection.
     pub async fn detect_language(&mut self, text: Vec<&str>) -> Result<DetectLanguageResponse>{
 
         let base_url = Url::parse(&format!("{}/v2/{}", TRANSLATE_SERVICE_BASE_URL, BasicServiceType::Detect.path()))?;

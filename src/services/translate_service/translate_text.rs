@@ -12,7 +12,7 @@ impl TranslateService {
     /// https://cloud.google.com/translate/docs/reference/rest/v2/translate
     /// https://cloud.google.com/translate/docs/basic/translating-text#translate_translate_text-drest
     ///
-    /// * `q` -  an array of strings to be translated.
+    /// * `text` -  an array of strings to be translated.
     /// * `target` - The language to use for translation of the input text.
     pub async fn translate(&mut self, text: Vec<&str>, target: &str) -> Result<TranslateTextResponse>{
         let request_body = TranslateTextRequest::new(text, target);
@@ -24,7 +24,7 @@ impl TranslateService {
     /// https://cloud.google.com/translate/docs/reference/rest/v2/translate
     /// https://cloud.google.com/translate/docs/basic/translating-text#translate_translate_text-drest
     ///
-    /// * `q` -  an array of strings to be translated.
+    /// * `text` -  an array of strings to be translated.
     /// * `target` - The language to use for translation of the input text.
     /// * `format` - The format of the source text, in either HTML (default) or plain-text. A value of html indicates HTML and a value of text indicates plain-text.
     /// * `source` - The language of the source text.

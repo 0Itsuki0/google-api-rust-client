@@ -1,4 +1,4 @@
-use super::{BasicServiceType, TranslateService};
+use super::{BasicServiceType, TranslateService, TRANSLATE_SERVICE_BASE_URL};
 
 use serde::{Serialize, Deserialize};
 use crate::services::service_error::ServiceErrorResponse;
@@ -15,15 +15,16 @@ use reqwest::{header::HeaderMap, Client, Url};
 
 impl TranslateService {
 
-    pub async fn translate(self, text: Vec<&str>, target: &str) -> Result<TranslateTextResponse>{
-        let base_url = Url::parse(&format!("https://translation.googleapis.com/language/translate/v2/{}", BasicServiceType::Translate.path()))?;
+    pub async fn translate(&mut self, text: Vec<&str>, target: &str) -> Result<TranslateTextResponse>{
+        let base_url = Url::parse(&format!("{}/v2/{}", TRANSLATE_SERVICE_BASE_URL, BasicServiceType::Translate.path()))?;
         let mut headers = HeaderMap::new();
         
 
-        if let Some(api_key) = self.api_key {
+        if let Some(api_key) = &self.api_key {
             headers.insert("X-goog-api-key", HeaderValue::from_str(&api_key)?);
-        } else if let Some(mut credentials) = self.service_account_credentials {
+        } else if let Some(mut credentials) = self.service_account_credentials.to_owned() {
             let token = credentials.get_access_token().await?;
+            self.service_account_credentials = Some(credentials);
             headers.insert(AUTHORIZATION, HeaderValue::from_str(&format!("Bearer {}", token))?);
         } else {
             bail!("Unknown Auth Method!")

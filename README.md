@@ -1,5 +1,6 @@
 # Google API Client
-An unoffical client library for Google APIs. 
+An unoffical client library for Google APIs. <br>
+crate.io: [google-api-rust-client-unoffical](https://crates.io/crates/google-api-rust-client-unoffical)
 <br>
 
 ## Installation
@@ -9,7 +10,7 @@ cargo add google-api-rust-client-unoffical
 ```
 Or add the following line to your Cargo.toml:
 ```
-google-api-rust-client-unoffical = "0.1.0"
+google-api-rust-client-unoffical = "0.1.2"
 ```
 <br>
 

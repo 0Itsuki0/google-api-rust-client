@@ -4,7 +4,9 @@ use crate::auth::service_account::ServiceAccountCredentials;
 
 
 static TRANSLATE_SERVICE_SCOPE: &str = "https://www.googleapis.com/auth/cloud-translation";
+static TRANSLATE_SERVICE_BASE_URL: &str = "https://translation.googleapis.com/language/translate";
 
+#[derive(Debug, Clone)]
 pub struct TranslateService {
     api_key: Option<String>,
     service_account_credentials: Option<ServiceAccountCredentials>, 

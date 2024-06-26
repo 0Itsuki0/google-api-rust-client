@@ -59,7 +59,7 @@ let token = credentials.get_access_token().await?;
 
 #### Using Credentials with Services
 ```
-let translation_service = TranslateService::new_with_credentials(credentials);
+let mut translation_service = TranslateService::new_with_credentials(credentials);
 let response = translation_service.translate(vec!["test"], "ja").await?;
 ```
 
@@ -67,7 +67,7 @@ let response = translation_service.translate(vec!["test"], "ja").await?;
 ### API KEY
 To use API keys, pass them in when creating service objects. 
 ```
-let translation_service = TranslateService::new_with_api_key(api_key);
+let mut translation_service = TranslateService::new_with_api_key(api_key);
 let response = translation_service.translate(vec!["test"], "ja").await?;
 ```
 <br>

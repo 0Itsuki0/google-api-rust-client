@@ -1,6 +1,6 @@
 [package]
 name = "google-api-rust-client-unoffical"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Itsuki <itsuki.enjoy@google.com>"]
 description = "An unoffical client library for Google APIs. "

@@ -53,12 +53,14 @@ impl ServiceAccountCredentials {
     pub fn with_scopes(&self, scopes: Vec<&str>) -> Self {
         let mut scoped_credentials = self.clone();
         scoped_credentials.scopes = Some(scopes.into_iter().map(|s| s.to_owned()).collect());
+        scoped_credentials.token = None;
         return scoped_credentials
     }
 
     pub fn with_subject(&self, subject: &str) -> Self {
         let mut subjected_credential = self.clone();
         subjected_credential.sub = Some(subject.to_owned());
+        subjected_credential.token = None;
         return subjected_credential
     }
 

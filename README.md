@@ -10,15 +10,15 @@ cargo add google-api-rust-client-unoffical
 ```
 Or add the following line to your Cargo.toml:
 ```
-google-api-rust-client-unoffical = "0.1.2"
+google-api-rust-client-unoffical = "0.1.3"
 ```
 <br>
 
 ## Authorization
-Obtain Service Account credentials or API Key from APIs & Services > Credentials in the Google Cloud Console. 
+Obtain Service Account credentials or API Key from APIs & Services > Credentials in the Google Cloud Console.
 
 
-### Service Account 
+### Service Account
 #### Create Credentials From JSON File
 ```
 let filepath: PathBuf = PathBuf::from_str("credentials.json")?;
@@ -60,15 +60,16 @@ let token = credentials.get_access_token().await?;
 #### Using Credentials with Services
 ```
 let mut translation_service = TranslateService::new_with_credentials(credentials);
-let response = translation_service.translate(vec!["test"], "ja").await?;
+let response = translation_service.list_languages(Some("ja"), None).await?;
 ```
 
 
 ### API KEY
-To use API keys, pass them in when creating service objects. 
+To use API keys, pass them in when creating service objects.
 ```
+let api_key = env::var("API_KEY")?;
 let mut translation_service = TranslateService::new_with_api_key(api_key);
-let response = translation_service.translate(vec!["test"], "ja").await?;
+let response = translation_service.list_languages(Some("ja"), None).await?;
 ```
 <br>
 
@@ -78,10 +79,15 @@ Refer to [auth.rs](/examples/auth.rs) for authorization example.
 
 ## Services
 
-### Cloud Translation
-https://cloud.google.com/translate <br>
-(Under Construction)
+### Cloud Translation Basic Edition (v2)
+Supported APIs
+- [Translate](https://cloud.google.com/translate/docs/reference/rest/v2/translate): Translates input text, returning translated text.
+- [Detect](https://cloud.google.com/translate/docs/reference/rest/v2/detect): Detects the language of texts.
+- [Languages](https://cloud.google.com/translate/docs/reference/rest/v2/languages): Returns a list of supported languages for translation.
 
-#### Basic Edition (v2)
-- [Translate](https://cloud.google.com/translate/docs/basic/translating-text#translate_translate_text-drest): Refer to [translate.rs](/examples/translate.rs) for usage examples.
+<br>
 
+Refer to [translate_service.rs](/examples/translate_service.rs) for usage examples.<br>
+
+
+### Other Services Under Construction!

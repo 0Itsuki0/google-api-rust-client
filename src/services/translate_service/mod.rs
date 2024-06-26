@@ -1,6 +1,11 @@
 
-pub mod translate;
+pub mod translate_text;
+pub mod list_languages;
+pub mod detect_language;
+
+
 use crate::auth::service_account::ServiceAccountCredentials;
+use super::ServiceBase;
 
 
 static TRANSLATE_SERVICE_SCOPE: &str = "https://www.googleapis.com/auth/cloud-translation";
@@ -8,35 +13,38 @@ static TRANSLATE_SERVICE_BASE_URL: &str = "https://translation.googleapis.com/la
 
 #[derive(Debug, Clone)]
 pub struct TranslateService {
-    api_key: Option<String>,
-    service_account_credentials: Option<ServiceAccountCredentials>, 
+    base: ServiceBase
 }
 
 
 impl TranslateService {
+    /// Create `TranslateService` Authenticate by using API keys.
+    ///
+    /// * `api_key` -  API key to use to authenticate to Google Cloud APIs and services that support API keys.
     pub fn new_with_api_key(api_key: String) -> Self {
-        return Self { api_key: Some(api_key), service_account_credentials: None }
+        return Self { base: ServiceBase::new_with_api_key(api_key) }
     }
 
+    /// Create `TranslateService` Authenticate by using API keys.
+    ///
+    /// * `service_account_credentials` -  `ServiceAccountCredentials` to use to authenticate to Google Cloud APIs.
     pub fn new_with_credentials(service_account_credentials: ServiceAccountCredentials) -> Self {
-        let scoped_credentials = service_account_credentials.with_scopes(vec![TRANSLATE_SERVICE_SCOPE]);
-        return Self { api_key: None, service_account_credentials: Some(scoped_credentials) }
+        return Self { base: ServiceBase::new_with_credentials(service_account_credentials, vec![TRANSLATE_SERVICE_SCOPE]) }
     }
 }
 
-
 enum BasicServiceType {
-    Translate, 
-    // Detect, 
-    // Languages
+    Translate,
+    Detect,
+    Languages
 }
 
 impl BasicServiceType {
     fn path(&self) -> &str {
         match *self {
             BasicServiceType::Translate => "",
-            // ServiceType::Detect => "detect",
-            // ServiceType::Languages =>  "languages"
+            BasicServiceType::Detect => "detect",
+            BasicServiceType::Languages =>  "languages"
         }
     }
 }

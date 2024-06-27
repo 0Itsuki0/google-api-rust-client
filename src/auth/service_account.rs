@@ -14,21 +14,21 @@ use super::auth_error::AuthErrorResponse;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ServiceAccountCredentials {
     r#type: String,
-    project_id: String,
-    private_key_id: String,
+    project_id: String, 
+    private_key_id: String, 
     private_key: String,
-    client_email: String,
+    client_email: String, 
     client_id: String,
-    auth_uri: String,
-    token_uri: String,
-    auth_provider_x509_cert_url: String,
-    client_x509_cert_url: String,
+    auth_uri: String, 
+    token_uri: String, 
+    auth_provider_x509_cert_url: String, 
+    client_x509_cert_url: String, 
     universe_domain: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     token: Option<Token>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    scopes: Option<Vec<String>>,
+    scopes: Option<Vec<String>>, 
     #[serde(skip_serializing_if = "Option::is_none")]
     sub: Option<String>
 }
@@ -41,42 +41,27 @@ pub struct Token {
 }
 
 impl ServiceAccountCredentials {
-    /// Create `ServiceAccountCredentials` from file.
-    ///
-    /// * `filepath` -  File path to the service account credential file. File should be valid JSON.
     pub fn from_service_account_file(filepath: PathBuf) -> Result<Self> {
         let credentials_json = fs::read_to_string(filepath)?;
         Ok(serde_json::from_str::<ServiceAccountCredentials>(&credentials_json)?)
     }
 
-    /// Create `ServiceAccountCredentials` from json string.
-    ///
-    /// * `credentials_json` -  Json string of the service account crendentials.
     pub fn from_service_account_info(credentials_json: String) -> Result<Self>  {
         Ok(serde_json::from_str::<ServiceAccountCredentials>(&credentials_json)?)
     }
 
-    /// Add scopes to request the access token for.
-    ///
-    /// * `scopes` -  Scopes that your application needs access to. [OAuth 2.0 Scopes](https://developers.google.com/identity/protocols/oauth2/scopes)
     pub fn with_scopes(&self, scopes: Vec<&str>) -> Self {
         let mut scoped_credentials = self.clone();
         scoped_credentials.scopes = Some(scopes.into_iter().map(|s| s.to_owned()).collect());
-        scoped_credentials.token = None;
         return scoped_credentials
     }
 
-    /// Add subject to grants your application delegated access to a resource.
-    ///
-    /// * `sub` -  The email address of the user for which the application is requesting delegated access. Ensure that the service account is authorized in the [Domain-wide delegation](https://support.google.com/a/answer/162106) page of the Admin console for the user in the sub claim
     pub fn with_subject(&self, subject: &str) -> Self {
         let mut subjected_credential = self.clone();
         subjected_credential.sub = Some(subject.to_owned());
-        subjected_credential.token = None;
         return subjected_credential
     }
 
-    /// Get an access token for the service account using the scopes and subject specified.
     pub async fn get_access_token(&mut self) -> Result<String> {
         let now = Local::now();
         let iat = now.timestamp();
@@ -116,11 +101,11 @@ impl ServiceAccountCredentials {
                 "".to_owned()
             },
         };
-
+    
         let mut header = Header::new(Algorithm::RS256);
         header.typ = Some("JWT".to_owned());
         header.kid = Some("".to_owned());
-
+        
         let now = Local::now();
         let iat = now.timestamp();
         let exp = (now + Duration::hours(1)).timestamp();
@@ -132,13 +117,13 @@ impl ServiceAccountCredentials {
             iat,
             exp,
         };
-
+    
         let jwt = encode(
             &header,
             &claims,
             &EncodingKey::from_rsa_pem(self.private_key.as_bytes())?,
         )?;
-
+    
         return Ok(jwt);
     }
 
@@ -150,21 +135,21 @@ impl ServiceAccountCredentials {
             CONTENT_TYPE,
             HeaderValue::from_static("application/x-www-form-urlencoded"),
         );
-
+    
         let grant_type = "urn:ietf:params:oauth:grant-type:jwt-bearer".to_owned();
-
+    
         let body_encoded = url_encoded_data::stringify(&[
             ("assertion", assertion),
             ("grant_type", &grant_type)
         ]);
-
+    
         let response = client
             .post(self.token_uri.clone())
             .headers(headers.clone())
             .body(body_encoded)
             .send()
             .await?;
-
+    
         let status_code = response.status();
         let body: String = response.text().await?;
 

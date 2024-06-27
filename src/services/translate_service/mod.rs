@@ -1,50 +1,69 @@
-
-pub mod translate_text;
-pub mod list_languages;
-pub mod detect_language;
-
-
+pub mod translate;
 use crate::auth::service_account::ServiceAccountCredentials;
-use super::ServiceBase;
-
 
 static TRANSLATE_SERVICE_SCOPE: &str = "https://www.googleapis.com/auth/cloud-translation";
-static TRANSLATE_SERVICE_BASE_URL: &str = "https://translation.googleapis.com/language/translate";
+static MY_BUSINESS_SERVICE_SCOPE: &str = "https://www.googleapis.com/auth/plus.business.manage";
 
-#[derive(Debug, Clone)]
 pub struct TranslateService {
-    base: ServiceBase
+    api_key: Option<String>,
+    service_account_credentials: Option<ServiceAccountCredentials>,
 }
 
-
 impl TranslateService {
-    /// Create `TranslateService` Authenticate by using API keys.
-    ///
-    /// * `api_key` -  API key to use to authenticate to Google Cloud APIs and services that support API keys.
     pub fn new_with_api_key(api_key: String) -> Self {
-        return Self { base: ServiceBase::new_with_api_key(api_key) }
+        return Self {
+            api_key: Some(api_key),
+            service_account_credentials: None,
+        };
     }
 
-    /// Create `TranslateService` Authenticate by using API keys.
-    ///
-    /// * `service_account_credentials` -  `ServiceAccountCredentials` to use to authenticate to Google Cloud APIs.
     pub fn new_with_credentials(service_account_credentials: ServiceAccountCredentials) -> Self {
-        return Self { base: ServiceBase::new_with_credentials(service_account_credentials, vec![TRANSLATE_SERVICE_SCOPE]) }
+        let scoped_credentials =
+            service_account_credentials.with_scopes(vec![TRANSLATE_SERVICE_SCOPE]);
+        return Self {
+            api_key: None,
+            service_account_credentials: Some(scoped_credentials),
+        };
+    }
+}
+
+pub struct BusinessService {
+    api_key: Option<String>,
+    service_account_credentials: Option<ServiceAccountCredentials>,
+}
+
+impl BusinessService {
+    pub fn new_with_api_key(api_key: String) -> Self {
+        return Self {
+            api_key: Some(api_key),
+            service_account_credentials: None,
+        };
+    }
+
+    pub fn new_with_credentials(service_account_credentials: ServiceAccountCredentials) -> Self {
+        let scoped_credentials =
+            service_account_credentials.with_scopes(vec![MY_BUSINESS_SERVICE_SCOPE]);
+        return Self {
+            api_key: None,
+            service_account_credentials: Some(scoped_credentials),
+        };
     }
 }
 
 enum BasicServiceType {
     Translate,
-    Detect,
-    Languages
+    Account,
+    // Detect,
+    // Languages
 }
 
 impl BasicServiceType {
     fn path(&self) -> &str {
         match *self {
             BasicServiceType::Translate => "",
-            BasicServiceType::Detect => "detect",
-            BasicServiceType::Languages =>  "languages"
+            BasicServiceType::Account => "",
+            // ServiceType::Detect => "detect",
+            // ServiceType::Languages =>  "languages"
         }
     }
 }

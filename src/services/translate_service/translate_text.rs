@@ -1,38 +1,33 @@
+use std::collections::HashMap;
+
 use super::{BasicServiceType, TranslateService, TRANSLATE_SERVICE_BASE_URL};
 
 use serde::{Serialize, Deserialize};
 use anyhow::Result;
 use reqwest::{Client, Url};
+use serde_json::Value;
 
 impl TranslateService {
 
-    /// Translates text into the target language
-    /// with default format, automatically detected source language, using nmt Neural Machine Translation (NMT) model. <br>
+    /// Translates text into the target language. <br>
     /// See https://g.co/cloud/translate/v2/translate-reference#supported_languages
     /// https://cloud.google.com/translate/docs/reference/rest/v2/translate
     /// https://cloud.google.com/translate/docs/basic/translating-text#translate_translate_text-drest
     ///
     /// * `text` -  an array of strings to be translated.
     /// * `target` - The language to use for translation of the input text.
-    pub async fn translate(&mut self, text: Vec<&str>, target: &str) -> Result<TranslateTextResponse>{
-        let request_body = TranslateTextRequest::new(text, target);
-        self.post_translate_request(request_body).await
-    }
+    /// * `params` - Optional Additional Parameter. Keys accepted are the following.
+    ///     * `format` - The format of the source text, in either HTML (default) or plain-text. A value of html indicates HTML and a value of text indicates plain-text.
+    ///     * `source` - The language of the source text.
+    ///     * `model` - The translation model. Cloud Translation - Basic offers only the nmt Neural Machine Translation (NMT) model. If the model is base, the request is translated by using the NMT model..
+    pub async fn translate(&mut self, text: Vec<&str>, target: &str, params: Option<HashMap<String, Value>>) -> Result<TranslateTextResponse>{
+        let request_body = if let Some(params) = params {
+            TranslateTextRequest::new_with_params(text, target, params)?
+        } else {
+            TranslateTextRequest::new(text, target)
+        };
 
-    /// Translates text into the target language with custom parameters. <br>
-    /// See https://g.co/cloud/translate/v2/translate-reference#supported_languages
-    /// https://cloud.google.com/translate/docs/reference/rest/v2/translate
-    /// https://cloud.google.com/translate/docs/basic/translating-text#translate_translate_text-drest
-    ///
-    /// * `text` -  an array of strings to be translated.
-    /// * `target` - The language to use for translation of the input text.
-    /// * `format` - The format of the source text, in either HTML (default) or plain-text. A value of html indicates HTML and a value of text indicates plain-text.
-    /// * `source` - The language of the source text.
-    /// * `model` - The translation model. Cloud Translation - Basic offers only the nmt Neural Machine Translation (NMT) model. If the model is base, the request is translated by using the NMT model..
-    pub async fn translate_with_params(&mut self, text: Vec<&str>, target: &str, format: Option<&str>, source: Option<&str>, model: Option<&str>) -> Result<TranslateTextResponse>{
-        let request_body = TranslateTextRequest::new_with_params(text, target, format, source, model);
         self.post_translate_request(request_body).await
-
     }
 
     async fn post_translate_request(&mut self, request_body: TranslateTextRequest) -> Result<TranslateTextResponse> {
@@ -56,6 +51,21 @@ impl TranslateService {
 struct TranslateTextRequest {
     q: Vec<String>,
     target: String,
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    // format: Option<String>,
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    // source: Option<String>,
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    // model: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none", flatten)]
+    params: Option<TranslateTextRequestOptionalParams>
+}
+
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct TranslateTextRequestOptionalParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     format: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -69,20 +79,30 @@ impl TranslateTextRequest {
         return Self{
             q: text.into_iter().map(|s| s.to_owned()).collect(),
             target: target.to_owned(),
-            format: None,
-            source: None,
-            model: None
+            params: None,
+            // source: None,
+            // model: None
         };
     }
 
-    fn new_with_params(text: Vec<&str>, target: &str, format: Option<&str>, source: Option<&str>, model: Option<&str>) -> Self {
-        return Self{
+    // fn new_with_params(text: Vec<&str>, target: &str, format: Option<&str>, source: Option<&str>, model: Option<&str>) -> Self {
+    //     return Self{
+    //         q: text.into_iter().map(|s| s.to_owned()).collect(),
+    //         target: target.to_owned(),
+    //         format: format.map(String::from),
+    //         source: source.map(String::from),
+    //         model: model.map(String::from)
+    //     };
+    // }
+    fn new_with_params(text: Vec<&str>, target: &str, params: HashMap<String, Value>) -> Result<Self> {
+        let additional_params_string = serde_json::to_string(&params)?;
+        let additional_params: TranslateTextRequestOptionalParams = serde_json::from_str(&additional_params_string)?;
+
+        return Ok(Self{
             q: text.into_iter().map(|s| s.to_owned()).collect(),
             target: target.to_owned(),
-            format: format.map(String::from),
-            source: source.map(String::from),
-            model: model.map(String::from)
-        };
+            params: Some(additional_params)
+        });
     }
 }
 

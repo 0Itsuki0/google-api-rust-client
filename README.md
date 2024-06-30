@@ -10,7 +10,7 @@ cargo add google-api-rust-client-unoffical
 ```
 Or add the following line to your Cargo.toml:
 ```
-google-api-rust-client-unoffical = "0.1.3"
+google-api-rust-client-unoffical = "0.1.4"
 ```
 <br>
 

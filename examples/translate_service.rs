@@ -1,6 +1,5 @@
 use dotenvy::dotenv;
 use google_api_rust_client_unoffical::{auth::service_account::ServiceAccountCredentials, services::translate_service::TranslateService};
-use serde::de::value;
 use serde_json::Value;
 use std::{collections::HashMap, env, path::PathBuf, str::FromStr, vec};
 use anyhow::Result;

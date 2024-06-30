@@ -51,12 +51,6 @@ impl TranslateService {
 struct TranslateTextRequest {
     q: Vec<String>,
     target: String,
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // format: Option<String>,
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // source: Option<String>,
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // model: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none", flatten)]
     params: Option<TranslateTextRequestOptionalParams>
@@ -80,20 +74,9 @@ impl TranslateTextRequest {
             q: text.into_iter().map(|s| s.to_owned()).collect(),
             target: target.to_owned(),
             params: None,
-            // source: None,
-            // model: None
         };
     }
 
-    // fn new_with_params(text: Vec<&str>, target: &str, format: Option<&str>, source: Option<&str>, model: Option<&str>) -> Self {
-    //     return Self{
-    //         q: text.into_iter().map(|s| s.to_owned()).collect(),
-    //         target: target.to_owned(),
-    //         format: format.map(String::from),
-    //         source: source.map(String::from),
-    //         model: model.map(String::from)
-    //     };
-    // }
     fn new_with_params(text: Vec<&str>, target: &str, params: HashMap<String, Value>) -> Result<Self> {
         let additional_params_string = serde_json::to_string(&params)?;
         let additional_params: TranslateTextRequestOptionalParams = serde_json::from_str(&additional_params_string)?;

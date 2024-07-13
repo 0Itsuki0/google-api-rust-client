@@ -10,7 +10,7 @@ cargo add google-api-rust-client-unoffical
 ```
 Or add the following line to your Cargo.toml:
 ```
-google-api-rust-client-unoffical = "0.1.4"
+google-api-rust-client-unoffical = "0.1.5"
 ```
 <br>
 
@@ -88,6 +88,18 @@ Supported APIs
 <br>
 
 Refer to [translate_service.rs](/examples/translate_service.rs) for usage examples.<br>
+
+
+
+### Routes API
+Supported APIs
+- [Compute Route](https://developers.google.com/maps/documentation/routes/compute_route_directions): Get a route between a start and an end point for different modes of transportation, such as walking, biking, or different types of vehicles. You can also request route details such as distance, estimated time to navigate the route, expected tolls, and step-by-step instructions to navigate the route.
+
+- [Compute Route Matrix](https://developers.google.com/maps/documentation/routes/compute_route_matrix): Get a matrix of information for recommended routes between multiple start and end points, including distance and estimated arrival times.
+
+<br>
+
+Refer to [route_service.rs](/examples/route_service.rs) for usage examples.<br>
 
 
 ### Other Services Under Construction!

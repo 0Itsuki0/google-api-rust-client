@@ -33,18 +33,18 @@ impl TranslateService {
     }
 }
 
-enum BasicServiceType {
+enum TranslateServiceV2Type {
     Translate,
     Detect,
     Languages
 }
 
-impl BasicServiceType {
+impl TranslateServiceV2Type {
     fn path(&self) -> &str {
         match *self {
-            BasicServiceType::Translate => "",
-            BasicServiceType::Detect => "detect",
-            BasicServiceType::Languages =>  "languages"
+            TranslateServiceV2Type::Translate => "",
+            TranslateServiceV2Type::Detect => "detect",
+            TranslateServiceV2Type::Languages =>  "languages"
         }
     }
 }

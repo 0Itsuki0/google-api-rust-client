@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::{BasicServiceType, TranslateService, TRANSLATE_SERVICE_BASE_URL};
+use super::{TranslateServiceV2Type, TranslateService, TRANSLATE_SERVICE_BASE_URL};
 
 use serde::{Serialize, Deserialize};
 use anyhow::Result;
@@ -19,20 +19,15 @@ impl TranslateService {
     /// * `params` - Optional Additional Parameter. Keys accepted are the following.
     ///     * `format` - The format of the source text, in either HTML (default) or plain-text. A value of html indicates HTML and a value of text indicates plain-text.
     ///     * `source` - The language of the source text.
-    ///     * `model` - The translation model. Cloud Translation - Basic offers only the nmt Neural Machine Translation (NMT) model. If the model is base, the request is translated by using the NMT model..
+    ///     * `model` - The translation model. Cloud Translation - Basic offers only the nmt Neural Machine Translation (NMT) model. If the model is base, the request is translated by using the NMT model.
     pub async fn translate(&mut self, text: Vec<&str>, target: &str, params: Option<HashMap<String, Value>>) -> Result<TranslateTextResponse>{
-        let request_body = if let Some(params) = params {
-            TranslateTextRequest::new_with_params(text, target, params)?
-        } else {
-            TranslateTextRequest::new(text, target)
-        };
-
+        let request_body =TranslateTextRequest::new(text, target, params)?;
         self.post_translate_request(request_body).await
     }
 
     async fn post_translate_request(&mut self, request_body: TranslateTextRequest) -> Result<TranslateTextResponse> {
 
-        let base_url = Url::parse(&format!("{}/v2/{}", TRANSLATE_SERVICE_BASE_URL, BasicServiceType::Translate.path()))?;
+        let base_url = Url::parse(&format!("{}/v2/{}", TRANSLATE_SERVICE_BASE_URL, TranslateServiceV2Type::Translate.path()))?;
         let headers = self.base.create_headers().await?;
         let builder = Client::new().post(base_url)
                 .headers(headers)
@@ -69,23 +64,19 @@ struct TranslateTextRequestOptionalParams {
 }
 
 impl TranslateTextRequest {
-    fn new(text: Vec<&str>, target: &str) -> Self {
-        return Self{
-            q: text.into_iter().map(|s| s.to_owned()).collect(),
-            target: target.to_owned(),
-            params: None,
+
+    fn new(text: Vec<&str>, target: &str, params: Option<HashMap<String, Value>>) -> Result<Self> {
+        let additional_params: Option<TranslateTextRequestOptionalParams> = if let Some(params) = params {
+            let additional_params_string = serde_json::to_string(&params)?;
+            serde_json::from_str(&additional_params_string)?
+        } else {
+            None
         };
-    }
-
-    fn new_with_params(text: Vec<&str>, target: &str, params: HashMap<String, Value>) -> Result<Self> {
-        let additional_params_string = serde_json::to_string(&params)?;
-        let additional_params: TranslateTextRequestOptionalParams = serde_json::from_str(&additional_params_string)?;
-
-        return Ok(Self{
+        Ok(Self{
             q: text.into_iter().map(|s| s.to_owned()).collect(),
             target: target.to_owned(),
-            params: Some(additional_params)
-        });
+            params: additional_params
+        })
     }
 }
 

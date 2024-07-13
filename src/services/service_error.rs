@@ -1,5 +1,3 @@
-use std::vec;
-
 use serde::{Serialize, Deserialize};
 use serde_json::Value;
 
@@ -22,7 +20,8 @@ impl Default for ServiceErrorResponse {
 pub struct ErrorResponseStatus {
     pub code: u32,
     pub message: String,
-    pub details: Vec<Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub details: Option<Vec<Value>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -34,7 +33,7 @@ impl Default for ErrorResponseStatus {
         Self {
             code: 400,
             message: "Unknown Error".to_owned(),
-            details: vec![],
+            details: None,
             status: None,
             errors: None
         }

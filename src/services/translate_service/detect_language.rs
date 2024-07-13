@@ -1,5 +1,5 @@
 
-use super::{BasicServiceType, TranslateService, TRANSLATE_SERVICE_BASE_URL};
+use super::{TranslateServiceV2Type, TranslateService, TRANSLATE_SERVICE_BASE_URL};
 
 use serde::{Serialize, Deserialize};
 use anyhow::Result;
@@ -14,7 +14,7 @@ impl TranslateService {
     /// * `text` -  an array of strings to upon which to perform language detection.
     pub async fn detect_language(&mut self, text: Vec<&str>) -> Result<DetectLanguageResponse>{
 
-        let base_url = Url::parse(&format!("{}/v2/{}", TRANSLATE_SERVICE_BASE_URL, BasicServiceType::Detect.path()))?;
+        let base_url = Url::parse(&format!("{}/v2/{}", TRANSLATE_SERVICE_BASE_URL, TranslateServiceV2Type::Detect.path()))?;
         let headers = self.base.create_headers().await?;
         let request_body = DetectLanguageRequest::new(text);
         let builder = Client::new().post(base_url)

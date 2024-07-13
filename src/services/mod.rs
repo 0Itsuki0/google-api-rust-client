@@ -1,4 +1,5 @@
 pub mod translate_service;
+pub mod route_service;
 pub mod service_error;
 
 use anyhow::{bail, Result};
@@ -49,7 +50,6 @@ impl ServiceBase {
         let response = request.send().await?;
         let status_code = response.status();
         let body: String = response.text().await?;
-
         println!("{}", body);
         if !status_code.is_success() {
             let error_response: ServiceErrorResponse = serde_json::from_str(&body).unwrap_or_default();

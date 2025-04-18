@@ -32,15 +32,13 @@ pub struct ComputeRouteMatrixRequest {
 
 impl ComputeRouteMatrixRequest {
     pub fn new(origin: &Vec<RouteMatrixOrigin>, destination: &Vec<RouteMatrixOrigin>, params: Option<HashMap<String, Value>>) -> Result<Self> {
-        println!("request parameter {:?}", params);
+
         let additional_params: Option<ComputeRouteMatixRequestOptinalParams> = if let Some(params) = params {
             let additional_params_string = serde_json::to_string(&params)?;
-            // println!("{:?}", additional_params_string);
             serde_json::from_str(&additional_params_string)?
         } else {
             None
         };
-        // println!("{:?}", additional_params);
 
         return Ok(Self{
             origins: origin.to_owned(),

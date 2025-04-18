@@ -25,15 +25,13 @@ pub struct ComputeRouteRequest {
 
 impl ComputeRouteRequest {
     pub fn new(origin: &WayPoint, destination: &WayPoint, params: Option<HashMap<String, Value>>) -> Result<Self> {
-        println!("request parameter {:?}", params);
+
         let additional_params: Option<ComputeRouteRequestOptinalParams> = if let Some(params) = params {
             let additional_params_string = serde_json::to_string(&params)?;
-            // println!("{:?}", additional_params_string);
             serde_json::from_str(&additional_params_string)?
         } else {
             None
         };
-        // println!("{:?}", additional_params);
 
         return Ok(Self{
             origin: origin.to_owned(),

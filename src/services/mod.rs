@@ -50,7 +50,7 @@ impl ServiceBase {
         let response = request.send().await?;
         let status_code = response.status();
         let body: String = response.text().await?;
-        println!("{}", body);
+
         if !status_code.is_success() {
             let error_response: ServiceErrorResponse = serde_json::from_str(&body).unwrap_or_default();
             bail!(format!("Response Error! Code: {}, Message: {}", error_response.error.code, error_response.error.message));

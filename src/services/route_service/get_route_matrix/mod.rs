@@ -48,7 +48,7 @@ impl RouteService {
         headers.insert("X-Goog-FieldMask", HeaderValue::from_str(&mask_string)?);
 
         let request_body = ComputeRouteMatrixRequest::new(origin, destination, params)?;
-        // println!("{}", serde_json::to_string_pretty(&request_body)?);
+
         let builder: reqwest::RequestBuilder = Client::new().post(base_url)
                 .headers(headers)
                 .body(serde_json::to_string(&request_body)?);
